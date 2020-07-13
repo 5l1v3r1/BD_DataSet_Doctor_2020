@@ -4,9 +4,26 @@ import csv
 import sys
 import display
 import tools
+import parsing_functions
+import check_path
+
+def write_row(fd, row):
+    a=0
 
 def parsing(row, fd_good_set, fd_to_review):
-    print(row)
+    row_array = row.split(',')
+    is_clean = False
+
+    if len(row_array[5]) > 0 and row_array[5] == "1":
+        return 0
+    if (parsing_functions.is_digit(2)) == False:
+        write_row(fd_to_review, row)
+        return 0
+    if (check_path.check_path(row_array[1], row_array[2], row_array[4]) == False):
+        write_row(fd_to_review, row)
+        return 0
+    print(row_array)
+
 
 def reader(dataset_path, fd_good_set, fd_to_review):
     wb = xlrd.open_workbook(dataset_path)
@@ -15,7 +32,7 @@ def reader(dataset_path, fd_good_set, fd_to_review):
     nb_columns = sh.ncols
     cur_row = ""
 
-    for i in range(nb_rows):
+    for i in range(2):#nb_rows):
         for n in range(nb_columns):
             cur_row = cur_row + str(sh.row_values(i)[n]) + ','
         parsing(cur_row, fd_good_set, fd_to_review)
