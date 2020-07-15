@@ -5,52 +5,42 @@ import display
 import tools
 import parsing_functions
 import parsing_disease
+import analyze
+import analyze_patient
+import analyze_tech
 
+def patient_analyze(age_entry, gender_entry, fd_to_review, row):
+    if analyze_patient.age_analyze(age_entry, fd_to_review, row):
+        return 1
+    elif analyze_patient.gender_analyze(gender_entry, fd_to_review, row):
+        return 1
+    else:
+        return 0
 
+def doctor_disease_analyze(entries, fd_to_review, row):
+    if analyze.known_disease_analyze(entries[0], fd_to_review, row):
+        return 1
+    if analyze.confident_rate_analyze(entries[1], fd_to_review, row):
+        return 1
+    if analyze.doctor_analyze(entries[2], fd_to_review, row):
+        return 1
+    if analyze.macroscopic_analyze(entries[3], fd_to_review, row):
+        return 1
+    return 0
 
 def parsing(row, fd_good_set, fd_to_review):
     row_array = row.split(',')
-    is_clean = False
+    disease_doctor_analyze = [row_array[6], row_array[15], row_array[8], row_array[16]]
 
-    if len(row_array[5]) > 0 and row_array[5] == "1":
-        print("Analyzing : " + row_array[5])
-        print("Problem found : [Delete]")
+    if analyze_tech.rm_line_analyze(row_array[5]):
+        return 0
+    elif analyze_tech.folder_analyze(row_array[2], fd_to_review, row):
         return 1
-    if (parsing_functions.is_digit(row_array[2])) == False:
-        print("Analyzing : " + row_array[2])
-        print("Problem found : [Folder not digit]")
-        display.write_row(fd_to_review, row)
+    elif patient_analyze(row_array[10], row_array[11], fd_to_review, row):
         return 1
-    if parsing_disease.verify_main_class(row_array[6]) == False:
-        print("Analyzing : " + row_array[6])
-        print("Problem found : [main disease not in known disease]")
-        display.write_row(fd_to_review, row)
-        return 1
-    if parsing_functions.is_empty(row_array[8]) == True:
-        print("Analyzing : " + row_array[8])
-        print("Problem found : [Doctor name not found]")
-        display.write_row(fd_to_review, row)
-        return 1
-    if parsing_functions.is_digit(row_array[10]) == False and row_array[10] != "":
-        print("Analyzing : " + row_array[10])
-        print("Problem found : [Age Error]")
-        display.write_row(fd_to_review, row)
-        return 1
-    if parsing_functions.is_gender(row_array[11]) == False:
-        print("Analyzing : " + row_array[11])
-        print("Problem found : [Gender Error]")
-        display.write_row(fd_to_review, row)
-        return 1
-    if parsing_functions.is_contain_between(row_array[15], 0, 100) == False:
-        print("Analyzing : " + row_array[15])
-        print("Problem found : [Confident Rate Error]")
-        display.write_row(fd_to_review, row)
-        return 1
-    if parsing_functions.is_macro(row_array[16]) == False:
-        print("Analyzing : " + row_array[16])
-        print("Problem found : [Is Macro entry Error]")
-        display.write_row(fd_to_review, row)
-        return 1
+    else:
+        if doctor_disease_analyze(disease_doctor_analyze, fd_to_review, row):
+            return 1
     display.write_row(fd_good_set, row)
     print("Analyzing :\nProblem found : Notting")
     return 0
@@ -73,7 +63,6 @@ def reader(dataset_path, fd_good_set, fd_to_review):
         cur_row = ""
     del wb
     display.result(dataset_path, sh.nrows, error)
-
 
 def main():
     dataset_path = "dataset/Khoi-task-6-7-20.xlsx"
