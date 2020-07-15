@@ -9,3 +9,8 @@ def get_args():
         elif argv[i] == "-h" or argv[i] == "--help":
             return ""
     return result
+
+def clean_entry(entry):
+    entry = entry.split(',')
+    entry = str("|".join(entry))
+    return entry
