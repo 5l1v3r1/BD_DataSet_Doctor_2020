@@ -5,24 +5,58 @@ import sys
 import display
 import tools
 import parsing_functions
-import check_path
+import parsing_disease
+from datetime import datetime
 
 def write_row(fd, row):
-    a=0
+    row = str(row) + '\n'
+    fd.write(row)
 
 def parsing(row, fd_good_set, fd_to_review):
     row_array = row.split(',')
     is_clean = False
 
     if len(row_array[5]) > 0 and row_array[5] == "1":
+        print("Analyzing : " + row_array[5])
+        print("Problem found : [Delete]")
         return 0
-    if (parsing_functions.is_digit(2)) == False:
+    if (parsing_functions.is_digit(row_array[2])) == False:
+        print("Analyzing : " + row_array[2])
+        print("Problem found : [Folder not digit]")
         write_row(fd_to_review, row)
         return 0
-    if (check_path.check_path(row_array[1], row_array[2], row_array[4]) == False):
+    if parsing_disease.verify_main_class(row_array[6]) == False:
+        print("Analyzing : " + row_array[6])
+        print("Problem found : [main disease not in known disease]")
         write_row(fd_to_review, row)
         return 0
-    print(row_array)
+    if parsing_functions.is_empty(row_array[8]) == True:
+        print("Analyzing : " + row_array[8])
+        print("Problem found : [Doctor name not found]")
+        write_row(fd_to_review, row)
+        return 0
+    if parsing_functions.is_digit(row_array[10]) == False and row_array[10] != "":
+        print("Analyzing : " + row_array[10])
+        print("Problem found : [Age Error]")
+        write_row(fd_to_review, row)
+        return 0
+    if parsing_functions.is_gender(row_array[11]) == False:
+        print("Analyzing : " + row_array[11])
+        print("Problem found : [Gender Error]")
+        write_row(fd_to_review, row)
+        return 0
+    if parsing_functions.is_contain_between(row_array[15], 0, 100) == False:
+        print("Analyzing : " + row_array[15])
+        print("Problem found : [Confident Rate Error]")
+        write_row(fd_to_review, row)
+        return 0
+    if parsing_functions.is_macro(row_array[16]) == False:
+        print("Analyzing : " + row_array[16])
+        print("Problem found : [Is Macro entry Error]")
+        write_row(fd_to_review, row)
+        return 0
+    write_row(fd_good_set, row)
+    print("Analyzing :\nProblem found : Notting")
 
 
 def reader(dataset_path, fd_good_set, fd_to_review):
@@ -32,10 +66,15 @@ def reader(dataset_path, fd_good_set, fd_to_review):
     nb_columns = sh.ncols
     cur_row = ""
 
-    for i in range(2):#nb_rows):
+    for i in range(20):#nb_rows):
         for n in range(nb_columns):
             cur_row = cur_row + str(sh.row_values(i)[n]) + ','
-        parsing(cur_row, fd_good_set, fd_to_review)
+        if i == 0:
+            write_row(fd_good_set, cur_row)
+            write_row(fd_to_review, cur_row)
+        else:
+            print("\n\n\nSend row " + str(i))
+            parsing(cur_row, fd_good_set, fd_to_review)
         cur_row = ""
 
 def buff_file(dataset_path):
@@ -55,6 +94,8 @@ def buff_file(dataset_path):
 
 def main():
     dataset_path = "dataset/Khoi-task-6-7-20.xlsx"
+    time = datetime.now()
+
     if len(sys.argv) > 1:
         dataset_path = tools.get_args()
         if dataset_path == "":

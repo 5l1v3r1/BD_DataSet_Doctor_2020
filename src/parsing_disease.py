@@ -9,9 +9,6 @@ def verify_main_class(item):
             if (item not in known_diseases) or item == "":
                 return False
         return True
-    # print(item)
     if item in known_diseases:
         return True
     return False
-
-print(verify_main_class("MEL-DF-Collision"))
