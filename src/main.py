@@ -1,6 +1,6 @@
 import xlrd
-import csv
 import sys
+import csv
 import display
 import tools
 import parsing_functions
