@@ -12,15 +12,6 @@ def is_digit(item):
         digit = False
     return True
 
-def is_gender(item):
-    item = str(item)
-
-    if len(item) == 0:
-        return True
-    if len(item) == 1 and (item.capitalize() == 'M' or item.capitalize() == 'F'):
-        return True
-    return False
-
 def is_empty(item):
     if str(item) == "":
         return True
@@ -40,5 +31,14 @@ def is_macro(item):
     case = ["0", "0.5", "1", "", "0.0", "1.0"]
 
     if (str(item) in case):
+        return True
+    return False
+
+def is_gender(item):
+    item = str(item)
+
+    if len(item) == 0:
+        return True
+    if len(item) == 1 and (item.capitalize() == 'M' or item.capitalize() == 'F'):
         return True
     return False
