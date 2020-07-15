@@ -8,3 +8,7 @@ def help():
 
 def result(file, nb_rows, error):
     print("\n\n\n\tRESULT : \n\n\t\tFILE : " + file + "\n\n\t\t\tNUMBER LINE IN FILE : " + str(nb_rows) + "\n\n\t\t\t\tNUMBER OF CORRUPTED LINES : " + str(error) + "\n\n\t\t\t\tNUMBER OF VALID LINES : " + str(nb_rows - error) + "\n\n\t\t\t\tRATIO : " + str(((nb_rows - error) / nb_rows) * 100) + " %\n\n")
+
+def write_row(fd, row):
+    row = str(row) + '\n'
+    fd.write(row)
